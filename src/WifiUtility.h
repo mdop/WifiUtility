@@ -281,7 +281,7 @@ class WifiUtility
 	
 	ulong connectionCheckIntervalMs_;
 	ulong checkWifiTimeout_;
-	ulong lastLoop;
+	ulong lastloop_;
 	int APTimeoutS_;
 	
 	#define D1PRINT(x) 		if(debuglevel_ >= 1 && !quiet_) 	{Serial.print(x);}
@@ -301,7 +301,7 @@ class WifiUtility
 class WifiMqttUtility : public WifiUtility
 {
 	public:
-	WifiMqttUtility();
+	WifiMqttUtility(int msgBufferSize = 128);
 	
 	bool begin();	//complete reset of WiFi and Mqtt service, returns if successful
 	bool connectMqtt();	//if connected does nothing, if mqtt can't connect reset, if WiFi not connected try to reconnect and reset

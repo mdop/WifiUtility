@@ -16,6 +16,8 @@ const char* WM_Param::preferedDefault()
 
 WifiUtility::WifiUtility() : initializing_(true), filesystem_(NULL), configParameters_(std::vector<WM_Param>()), initialConfig_(false), quiet_(false)
 {
+	if(!Serial)
+		Serial.begin(115200);
 	Serial.setDebugOutput(false);
 	
 	initAPIPConfigStruct(WM_AP_IPconfig_);
@@ -281,10 +283,10 @@ bool WifiUtility::loopConnectionTimeout()
 {
 	//detect either timer overflow or elapse of configured time interval
 	ulong currentMillis = millis();
-	bool res = (currentMillis > checkWifiTimeout_) || (lastLoop > currentMillis);
+	bool res = (currentMillis > checkWifiTimeout_) || (lastloop_ > currentMillis);
 	if(res)
 		checkWifiTimeout_ = currentMillis + connectionCheckIntervalMs_;
-	lastLoop = currentMillis;
+	lastloop_ = currentMillis;
 	return res;
 }
 
@@ -849,7 +851,7 @@ int WifiUtility::findParameterIndex(const char* id)
 
 
 
-WifiMqttUtility::WifiMqttUtility() : WifiUtility(), mqtt_(MQTTClient())
+WifiMqttUtility::WifiMqttUtility(int msgBufferSize) : WifiUtility(), mqtt_(MQTTClient(msgBufferSize))
 {
 	addParameter(mqttDataID[0], "MQTT Server Adresse", 20);
 	addParameter(mqttDataID[1], "MQTT Server Port", 5, "1883");
